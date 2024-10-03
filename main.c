@@ -1,17 +1,8 @@
 #include <stdio.h>
 
-
-void printSlots(int slots[]){
-    printf("\n");
-    for(int i=0; i< 20; i++){
-        printf("[%d]", slots[i]);
-    }
-    printf("\n");
-}
-
 int compileBF(char programkod[]){
     // Slot init
-    int slots[32768];
+    signed char slots[32768];
     for(int i =0; i<32768; i++){
         slots[i] = 0;
     }
@@ -31,17 +22,18 @@ int compileBF(char programkod[]){
     char ins;
 
 
+
     while(programkod[i] != '\0'){
         ins = programkod[i];
         switch(ins){
             case '+':
-                slots[pointer] = (slots[pointer] + 1 ) % 127; // ASCII túllépés elkerülése
+                slots[pointer] += 1;
                 break;
             case '-':
-                slots[pointer] = (slots[pointer] -  1 ) % 127;
+                slots[pointer] -= 1;
                 break;
             case '>':
-                if(pointer < 32768) pointer = pointer + 1;
+                if(pointer < 32768) pointer += 1;
                 else{
                     printf("\nRANGE_ERROR");
                     return 1;
@@ -59,9 +51,11 @@ int compileBF(char programkod[]){
                 printf("%c", out);
                 break;
             case ',':
-                scanf("%c", &inp);
-                if(inp == EOF || inp == '\0' || inp == '\n') slots[pointer] = -1;
-                else slots[pointer] = (int) inp;
+                if(scanf("%c", &inp) == EOF || inp == '\n' || inp == '\0'){
+                    slots[pointer] = -1;
+                    break;
+                }
+                slots[pointer] = (unsigned char) inp;
                 break;
             case '[':
                 if(slots[pointer] <= 0){
@@ -80,7 +74,6 @@ int compileBF(char programkod[]){
                 }
                 break;
             case ']':
-                
                 if (loops_running == 0){
                     printf("UNMATCHED ']' ");
                     return 1;
@@ -109,8 +102,6 @@ int compileBF(char programkod[]){
         printf("\nSYNTAX ERROR");
         return 1;
     }
-    printSlots(slots);
-
     return 0;
 
 }
@@ -118,10 +109,12 @@ int compileBF(char programkod[]){
 int main(){
 
     // Sierpinski-háromszög
-    char programkod[] =  "[ThisprogramprintsSierpinskitriangleon80-columndisplay.]>++++[<++++++++>-]>++++++++[>++++<-]>>++>>>+>>>+<<<<<<<<<<[-[->+<]>[-<+>>>.<<]>>>[[->++++++++[>++++<-]>.<<[->+<]+>[->++++++++++<<+>]>.[-]>]]+<<<[-[->+<]+>[-<+>>>-[->+<]++>[-<->]<<<]<<<<]++++++++++.+++.[-]<]+++++*****Made*By:*NYYRIKKI*2002*****";
+    char programkod[] =  "[ThisprogramprintsSierpinskitriangleon80-columndisplay.]>++++[<++++++++>-]>++++++++[>++++<-]\
+                        >>++>>>+>>>+<<<<<<<<<<[-[->+<]>[-<+>>>.<<]>>>[[->++++++++[>++++<-]>.<<[->+<]+>[->++++++++++<<+>]\
+                        >.[-]>]]+<<<[-[->+<]+>[-<+>>>-[->+<]++>[-<->]<<<]<<<<]++++++++++.+++.[-]<]+++++*****Made*By:*NYYRIKKI*2002*****";
     // Reverse string
-    char programkod2[] = ",.";//">,[>,]<[.<]";
-    //compileBF(programkod);
+    char programkod2[] = ">,[>,]<[.<]";
+    compileBF(programkod);
     compileBF(programkod2);
 
     return 0;
